@@ -5,6 +5,7 @@
  */
 'use strict';
 
+const Promise = require('bluebird');
 const fetch = require('node-fetch');
 
 const HTTP_OK = 200;
