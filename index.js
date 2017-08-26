@@ -58,57 +58,59 @@ class Transaction {
   }
 
   /**
-    * @name execute
-    * @param {function} resolve - promise resolve
-    * @param {function} reject - promise resolve
+  * @name execute
+  * @summary Returns the full query as a string.
+  * @return {object} promise
   */
-  execute(resolve, reject) {
-    let headers = {
-      'content-type': 'application/json',
-      'Accept': 'application/json; charset=UTF-8',
-      'Authorization': 'Basic ' + this.auth
-    };
-    let options = {
-      headers,
-      method: 'post',
-      body: JSON.stringify({
-        statements: this.statements
-      })
-    };
-    let result = {};
-    fetch(this.transactionUrl, options)
-      .then((res) => {
-        if (res.status !== HTTP_OK && res.status !== HTTP_CREATED) {
-          fetch(this.transactionUrl, {
-            headers,
-            'method': 'delete'
-          });
-          throw new Error(res.statusText);
-        }
-        return res.json();
-      })
-      .then((json) => {
-        if (json.errors.length > 0) {
-          throw json.errors[0].message;
-        } else {
-          result = json.results;
-          return fetch(json.commit, {
-            headers,
-            'method': 'post'
-          });
-        }
-      })
-      .then((res) => {
-        if (res.status === HTTP_OK) {
-          resolve(result);
-        } else {
-          throw new Error('commit failed');
-        }
-      })
-      .catch((err) => {
-        reject(new Error(err));
-      });
-    this.used = true;
+  execute() {
+    return new Promise((resolve, reject) => {
+      let headers = {
+        'content-type': 'application/json',
+        'Accept': 'application/json; charset=UTF-8',
+        'Authorization': 'Basic ' + this.auth
+      };
+      let options = {
+        headers,
+        method: 'post',
+        body: JSON.stringify({
+          statements: this.statements
+        })
+      };
+      let result = {};
+      fetch(this.transactionUrl, options)
+        .then((res) => {
+          if (res.status !== HTTP_OK && res.status !== HTTP_CREATED) {
+            fetch(this.transactionUrl, {
+              headers,
+              'method': 'delete'
+            });
+            throw new Error(res.statusText);
+          }
+          return res.json();
+        })
+        .then((json) => {
+          if (json.errors.length > 0) {
+            throw json.errors[0].message;
+          } else {
+            result = json.results;
+            return fetch(json.commit, {
+              headers,
+              'method': 'post'
+            });
+          }
+        })
+        .then((res) => {
+          if (res.status === HTTP_OK) {
+            resolve(result);
+          } else {
+            throw new Error('commit failed');
+          }
+        })
+        .catch((err) => {
+          reject(new Error(err));
+        });
+      this.used = true;
+    });
   }
 
   /**
@@ -176,8 +178,10 @@ class Neo4j {
    * @returns {object} ret - response data
    */
   getSimpleData(result) {
-    var ret = null;
-    result = result[0];
+    let ret = null;
+    if (result) {
+      result = result[0];
+    }
     if (!result || !result.data || result.data.length === 0) {
       return ret;
     }
@@ -194,8 +198,10 @@ class Neo4j {
    * @returns {object} ret - response data
    */
   getSimpleListData(result) {
-    var ret = null;
-    result = result[0];
+    let ret = null;
+    if (result) {
+      result = result[0];
+    }
     if (!result || !result.data || result.data.length === 0) {
       return ret;
     }
