@@ -148,13 +148,13 @@ class Neo4j {
   }
 
   /**
-  * @name initGraphDB
+  * @name init
   * @summary Initialize Neo4j Graph Database.
   * @param {string} graphDBUrl - path to Neo4j Graph Database
   * @param {string} userName - user name
   * @param {string} password - password
   */
-  initGraphDB(graphDBUrl, userName, password) {
+  init(graphDBUrl, userName, password) {
     this.graphDatabaseUrl = graphDBUrl;
     this.auth = '';
     if (userName && password) {
