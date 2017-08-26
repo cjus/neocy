@@ -1,0 +1,43 @@
+{
+  "name": "neocy",
+  "version": "0.9.0",
+  "private": false,
+  "description": "Neo4j / Cypher library with promises and transactions",
+  "author": {
+    "name": "Carlos Justiniano",
+    "email": "carlos.justiniano@gmail.com",
+    "url": "http://cjus.me"
+  },
+  "keywords": [
+    "neo4j",
+    "cypher"
+  ],
+  "scripts": {
+    "test": "mocha specs --reporter spec"
+  },
+  "engines": {
+    "node": ">=6.2.1"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "node-fetch": "1.7.2"
+  },
+  "devDependencies": {
+    "chai": "3.5.0",
+    "eslint": "3.11.1",
+    "mocha": "3.2.0",
+    "sinon": "1.17.6"
+  },
+  "bin": {
+    "neocy": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cjus/neocy.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cjus/neocy/issues"
+  },
+  "homepage": "https://github.com/neocy#readme"
+}
