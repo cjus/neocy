@@ -58,12 +58,11 @@ class Transaction {
   }
 
   /**
-    * @name _processTransaction
-    * @private
+    * @name execute
     * @param {function} resolve - promise resolve
     * @param {function} reject - promise resolve
   */
-  _processTransaction(resolve, reject) {
+  execute(resolve, reject) {
     let headers = {
       'content-type': 'application/json',
       'Accept': 'application/json; charset=UTF-8',
@@ -128,17 +127,6 @@ class Transaction {
       parameters: params
     });
     return this;
-  }
-
-  /**
-   * @name execute
-   * @description Execute a transaction
-   * @return {object} promise - promise object
-   */
-  execute() {
-    return new Promise((resolve, reject) => {
-      this._processTransaction(resolve, reject);
-    });
   }
 }
 

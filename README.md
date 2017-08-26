@@ -5,7 +5,7 @@ Neo4j Cypher library using promises and transactions.
 ```javascript
 const Neo4j = require('neocy');
 let neo4j = new Neo4j();
-neo4j.initGraphDB('http://127.0.0.1:7474', 'neo4j', 'password');
+neo4j.init('http://127.0.0.1:7474', 'neo4j', 'password');
 ```
 
 ## APIs
@@ -15,10 +15,11 @@ This module contains a core exported class Neo4j. In turn it also creates `Trans
 
 | Method | Description | Notes |
 | --- | --- | --- |
-| initGraphDB | Initialize Neo4j Graph Database | Required |
+| init | Initialize Neo4j Graph Database | Required |
 | createTransaction | Creates a transaction object | See Transaction API section |
 | createQueryBuilder | Creates a new query builder object | See Query Build API section |
-| getSimpleData | Helper to extra simple data responses | Simple data is defined as a single return value.  A single object qualifies |
+| getSimpleData | Helper to extract simple data responses | Simple data is defined as a single return value.  A single object qualifies |
+| getSimpleListData | Helper to extract simple arrat of data responses | Similar to getSimpleData but returns and array of objects |
 | toProps | Convert an object of properties to a property query string | |
 | toNamedProps | Converts a named object to a cypher compatible key / value pair | |
 | toSets | Converts an object to a cypher compatible list of set statements | |
