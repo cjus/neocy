@@ -1,6 +1,6 @@
 {
   "name": "neocy",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "private": false,
   "description": "Neo4j / Cypher library with promises and transactions",
   "author": {
@@ -19,10 +19,7 @@
     "node": ">=6.2.1"
   },
   "main": "index.js",
-  "dependencies": {
-    "bluebird": "3.5.0",
-    "node-fetch": "1.7.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "3.5.0",
     "eslint": "3.11.1",
