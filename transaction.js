@@ -5,17 +5,20 @@
 'use strict';
 
 const ServerRequest = require('./server-request');
+const TransactionPath = '/db/data/transaction';
 
 class Transaction {
   /**
     * @name constructor
-    * @param {string} transactionUrl - transaction URL
+    * @param {string} host - server host
+    * @param {number} port - server port (i.e. 7474)
     * @param {string} auth - Authorization string
    */
-  constructor(transactionUrl, auth) {
+  constructor(host, port, auth) {
     this.used = false;
     this.auth = auth;
-    this.transactionUrl = transactionUrl;
+    this.host = host;
+    this.port = port;
     this.statements = [];
   }
 
@@ -33,27 +36,26 @@ class Transaction {
       };
       let options = {
         headers,
-        url: this.transactionUrl,
-        method: 'POST',
+        host: this.host,
+        port: this.port,
+        path: TransactionPath,
+        method: 'post',
         body: JSON.stringify({
           statements: this.statements
         })
       };
       let result = {};
-
       let serverRequest = new ServerRequest();
       serverRequest.send(options)
         .then((res) => {
-          if (res.statusCode !== HTTP_OK && res.statusCode !== HTTP_CREATED) {
+          if (res.statusCode !== ServerRequest.HTTP_OK && res.statusCode !== ServerRequest.HTTP_CREATED) {
             let serverRequest = new ServerRequest();
-            serverRequest.send({
-              url: this.transactionUrl,
-              headers,
-              'method': 'DELETE'
-            });
+            serverRequest.send(Object.assign(options, {
+              method: 'delete'
+            }));
             throw new Error('Query failed to return OK or CREATED');
           }
-          return res.payload;
+          return JSON.parse(res.payLoad.toString('utf8'));
         })
         .then((json) => {
           if (json.errors.length > 0) {
@@ -61,15 +63,15 @@ class Transaction {
           } else {
             result = json.results;
             let serverRequest = new ServerRequest();
-            return serverRequest.send({
-              url: json.commit,
-              headers,
-              'method': 'POST'
-            });
+            return serverRequest.send(Object.assign(options, {
+              path: json.commit,
+              method: 'post',
+              body: ''
+            }));
           }
         })
         .then((res) => {
-          if (res.statusCode === HTTP_OK) {
+          if (res.statusCode === ServerRequest.HTTP_OK) {
             resolve(result);
           } else {
             throw new Error('Transaction commit failed');

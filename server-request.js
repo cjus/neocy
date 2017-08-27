@@ -7,9 +7,6 @@
 const http = require('http');
 const REQUEST_TIMEOUT = 30000; // 30-seconds
 
-const HTTP_OK = 200;
-const HTTP_CREATED = 201;
-
 class ServerRequest {
   /**
   * @name constructor
@@ -26,8 +23,10 @@ class ServerRequest {
   * @return {object} promise
   */
   send(options) {
+    console.log('options', options);
+
     return new Promise((resolve, reject) => {
-      if (options.method === 'POST' || options.method === 'PUT') {
+      if (options.method === 'post' || options.method === 'put') {
         options.headers = options.headers || {};
         options.headers['content-length'] = Buffer.byteLength(options.body, 'utf8');
       } else {
@@ -72,5 +71,8 @@ class ServerRequest {
     });
   }
 }
+
+ServerRequest.HTTP_OK = 200;
+ServerRequest.HTTP_CREATED = 201;
 
 module.exports = ServerRequest;

@@ -2,16 +2,73 @@
 Neo4j Cypher library using promises and transactions.
 
 ## Usage
+
+For simple transactions:
+
 ```javascript
 const Neo4j = require('neocy');
 let neo4j = new Neo4j();
-neo4j.init('http://127.0.0.1:7474', 'neo4j', 'password');
+neo4j.init('127.0.0.1', 7474, 'neo4j', 'password');
+
+let result;
+try {
+  result = await neo4j.simpleTransaction([
+    'MATCH (u:User {uid: {params}.uid})',
+    'RETURN u'
+  ], {
+    params: {
+      uid: '134'
+    }
+  });
+} catch (error) {
+  result = {
+    error
+  };
+}
+return result || {};
 ```
 
-## APIs
-This module contains a core exported class Neo4j. In turn it also creates `Transaction` and `QueryBuilder` objects.
+For more complicated transactions involving mulitple queries:
 
-#### Core API
+```javascript
+const Neo4j = require('neocy');
+let neo4j = new Neo4j();
+neo4j.init('127.0.0.1', 7474, 'neo4j', 'password');
+
+let users = [
+  {
+    uid: "111",
+    name: "John Smith"
+  },
+  {
+    uid: "134",
+    name: "Carlos Justiniano"
+  },
+];
+let transaction = neo4j.createTransaction();
+
+users.forEach((user) => {
+  let q = neo4j.createQueryBuilder();
+  q.add([
+    'CREATE (u:User {uid: {params}.uid, name: {params}.name})'
+  ]);
+  transaction.addQuery(q, {
+    params: user
+  });
+});
+
+let result;
+try {
+  result = await neo4j.getSimpleListData(await transaction.execute());
+} catch (error) {
+  result = {
+    error
+  };
+}
+return result || {};
+```
+
+#### API
 
 | Method | Description | Notes |
 | --- | --- | --- |
@@ -23,6 +80,7 @@ This module contains a core exported class Neo4j. In turn it also creates `Trans
 | toProps | Convert an object of properties to a property query string | |
 | toNamedProps | Converts a named object to a cypher compatible key / value pair | |
 | toSets | Converts an object to a cypher compatible list of set statements | |
+| simpleTransaction | Performs a simple transaction consisting of only a single transactions. | |
 
 #### Transaction API
 | Method | Description | Notes |

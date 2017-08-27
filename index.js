@@ -10,6 +10,7 @@ let QueryBuilder = require('./query-builder');
 class Neo4j {
   constructor() {
     this.graphDatabaseUrl = '';
+    this.graphDBPort = 7474;
     this.auth = '';
   }
 
@@ -17,12 +18,13 @@ class Neo4j {
   * @name init
   * @summary Initialize Neo4j Graph Database.
   * @param {string} graphDBUrl - path to Neo4j Graph Database
+  * @param {number} graphdBPort - neo4j server port (i.e. 7474)
   * @param {string} userName - user name
   * @param {string} password - password
   */
-  init(graphDBUrl, userName, password) {
+  init(graphDBUrl, graphDBPort, userName, password) {
     this.graphDatabaseUrl = graphDBUrl;
-    this.auth = '';
+    this.graphDBPort = graphDBPort;
     if (userName && password) {
       this.auth = new Buffer(userName + ':' + password).
         toString('base64').
@@ -31,12 +33,33 @@ class Neo4j {
   }
 
   /**
+  * @name simmpleTransaction
+  * @summary A simple transaction is one which does not consist of a single transaction
+  * @param {array} statements - array of string template statements
+  * @param {object} params - object containing template params
+  * @return {object} promise - promise resolving to an array of results
+  */
+  simpleTransaction(statements, params) {
+    return new Promise((resolve, reject) => {
+      let transaction = this.createTransaction();
+      let q = this.createQueryBuilder();
+      q.add(statements);
+      transaction.addQuery(q, params);
+      transaction.execute()
+        .then((result) => {
+          resolve(this.getSimpleListData(result));
+        })
+        .catch(reject);
+    });
+  }
+
+  /**
    * @name createTransaction
    * @description Creates a transaction object
-   * @return {object} pCypherTransaction
+   * @return {object} CypherTransaction
    */
   createTransaction() {
-    return new Transaction(`${this.graphDatabaseUrl}/db/data/transaction`, this.auth);
+    return new Transaction(this.graphDatabaseUrl, this.graphDBPort, this.auth);
   }
 
   /**
