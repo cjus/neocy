@@ -1,6 +1,6 @@
 {
   "name": "neocy",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "private": false,
   "description": "Neo4j / Cypher library with promises and transactions",
   "author": {

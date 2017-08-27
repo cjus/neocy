@@ -23,8 +23,6 @@ class ServerRequest {
   * @return {object} promise
   */
   send(options) {
-    console.log('options', options);
-
     return new Promise((resolve, reject) => {
       if (options.method === 'post' || options.method === 'put') {
         options.headers = options.headers || {};
